@@ -13,3 +13,35 @@ jobs:
       - name: Build
         run: ci/docker-build-game
         shell: bash
+      - name: Content
+        run: find -name *.zip
+        shell: bash
+
+  publish_pre_release:
+    needs: build
+    runs-on: ubuntu-18.04
+    # if: github.ref == 'refs/heads/master'
+    if: github.ref == 'refs/heads/wip/pre-release'
+
+    steps:
+      - id: create_pre_release
+        uses: actions/create-release@v1
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        with:
+          tag_name: latest
+          release_name: latest
+          draft: false
+          prerelease: true
+
+      - name: Upload pre release assets
+        uses: actions/upload-release-asset@v1
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        with:
+          upload_url: ${{ steps.create_pre_release.outputs.upload_url }}
+          # Source
+          asset_path: ./archives/pixelwheels-0.18.0-alpha.zip
+          # Destination
+          asset_name: pixelwheels-${{ github.sha }}-build${{ github.run_id }}.zip
+          asset_content_type: application/zip
