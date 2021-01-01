@@ -1,5 +1,6 @@
 buildscript {
     repositories {
+        xmvn()
         mavenCentral()
         jcenter()
         google()
@@ -24,6 +25,7 @@ allprojects {
     }
 
     repositories {
+        xmvn()
         mavenCentral()
         jcenter()
         google()
